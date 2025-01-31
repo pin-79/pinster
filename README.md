@@ -1,0 +1,3 @@
+# Pinster
+
+Hitster CLI clone.

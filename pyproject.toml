@@ -1,0 +1,42 @@
+[project]
+name = "pinster"
+version = "0.1.0"
+description = "Hitster CLI clone"
+readme = "README.md"
+authors = [{ name = "Michał Pindel", email = "m.pindel7991@gmail.com" }]
+requires-python = ">=3.13"
+dependencies = []
+
+[project.scripts]
+pinster = "pinster:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = ["pre-commit>=4.1.0"]
+
+[tool.pyright]
+typeCheckingMode = "strict"
+
+[tool.ruff.lint]
+ignore = [
+    "W191",
+    "E111",
+    "E114",
+    "E117",
+    "E501",
+    "D206",
+    "D300",
+    "Q000",
+    "Q001",
+    "Q002",
+    "Q003",
+    "COM812",
+    "COM819",
+]
+select = ["ALL"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
