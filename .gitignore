@@ -13,4 +13,4 @@ wheels/
 logs/
 
 # Dev setup
-launch.json
+.vscode/

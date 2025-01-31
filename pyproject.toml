@@ -5,12 +5,10 @@ description = "Hitster CLI clone"
 readme = "README.md"
 authors = [{ name = "Michał Pindel", email = "m.pindel7991@gmail.com" }]
 requires-python = ">=3.13"
-dependencies = [
-    "python-json-logger>=3.2.1",
-]
+dependencies = ["python-json-logger>=3.2.1", "typer>=0.15.1"]
 
 [project.scripts]
-pinster = "pinster.main:main"
+pinster = "pinster.main:app"
 
 [build-system]
 requires = ["hatchling"]

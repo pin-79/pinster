@@ -7,21 +7,19 @@ import logging
 import logging.config
 import pathlib
 
+import rich
+import typer
+
 logger = logging.getLogger("pinster")
 
+app = typer.Typer()
 
-def main() -> None:
-    """Main entry point."""
+
+@app.command()
+def main(name: str) -> None:
+    """Main command."""
     _setup_logging()
-    logger.debug("debug msg", extra={"attr": "HELLO"})
-    logger.info("debug msg")
-    logger.warning("warning msg")
-    logger.error("error msg")
-    logger.critical("critical msg")
-    try:
-        _ = 1 / 0
-    except ZeroDivisionError:
-        logger.exception("exception msg")
+    rich.print(f"Hello {name}!")
 
 
 def _setup_logging() -> None:
@@ -42,4 +40,4 @@ def _setup_logging() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    app()
