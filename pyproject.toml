@@ -8,7 +8,7 @@ requires-python = ">=3.13"
 dependencies = []
 
 [project.scripts]
-pinster = "pinster:main"
+pinster = "pinster.main:main"
 
 [build-system]
 requires = ["hatchling"]
@@ -22,6 +22,7 @@ typeCheckingMode = "strict"
 
 [tool.ruff.lint]
 ignore = [
+    # from https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
     "W191",
     "E111",
     "E114",
@@ -35,6 +36,8 @@ ignore = [
     "Q003",
     "COM812",
     "COM819",
+    # custom
+    "ANN204",
 ]
 select = ["ALL"]
 
