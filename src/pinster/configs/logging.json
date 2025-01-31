@@ -3,19 +3,16 @@
   "disable_existing_loggers": false,
   "formatters": {
     "simple": {
-      "format": "%(levelname)s: %(message)s"
+      "format": "{levelname}: {message}",
+      "style": "{"
     },
     "json": {
-      "()": "pinster.logger.JSONFormatter",
-      "fmt_keys": {
-        "level": "levelname",
-        "message": "message",
-        "timestamp": "timestamp",
-        "logger": "name",
-        "module": "module",
-        "function": "funcName",
-        "line": "lineno",
-        "thread_name": "threadName"
+      "()": "pythonjsonlogger.json.JsonFormatter",
+      "timestamp": true,
+      "format": "{levelname}{message}{timestamp}{name}{module}{funcName}{lineno}{threadName}",
+      "style": "{",
+      "rename_fields": {
+        "name": "logger"
       }
     }
   },
