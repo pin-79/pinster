@@ -9,8 +9,9 @@ wheels/
 # Virtual environments
 .venv
 
-# Logs
+# Logs & cache
 logs/
+.cache
 
 # Dev setup
 .vscode/

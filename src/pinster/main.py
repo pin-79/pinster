@@ -6,8 +6,9 @@ import json
 import logging
 import logging.config
 import pathlib
+from typing import Annotated
 
-import rich
+import spotipy
 import typer
 
 logger = logging.getLogger("pinster")
@@ -16,10 +17,22 @@ app = typer.Typer()
 
 
 @app.command()
-def main(name: str) -> None:
+def main(
+    spotify_client_id: Annotated[str, typer.Option(prompt=True)],
+    spotify_client_secret: Annotated[str, typer.Option(prompt=True)],
+) -> None:
     """Main command."""
     _setup_logging()
-    rich.print(f"Hello {name}!")
+
+    sp = spotipy.Spotify(
+        auth_manager=spotipy.SpotifyOAuth(
+            client_id=spotify_client_id,
+            client_secret=spotify_client_secret,
+            redirect_uri="http://localhost:3000",
+            scope="user-library-read, user-modify-playback-state",
+        )
+    )
+    sp.start_playback(uris=["spotify:track:3qD07JJOPiyqjiQeg1wDK3"])  # type: ignore[reportUnknownMemberType]
 
 
 def _setup_logging() -> None:
