@@ -3,7 +3,7 @@ name = "pinster"
 version = "0.1.0"
 description = "Hitster CLI clone"
 readme = "README.md"
-authors = [{ name = "Michał Pindel", email = "m.pindel7991@gmail.com" }]
+authors = [{ name = "pin" }]
 requires-python = ">=3.13"
 dependencies = ["python-json-logger>=3.2.1", "spotipy>=2.25.0", "typer>=0.15.1"]
 
