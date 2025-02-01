@@ -8,3 +8,10 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Logs & cache
+logs/
+.cache
+
+# Dev setup
+.vscode/

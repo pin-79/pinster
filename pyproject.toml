@@ -3,12 +3,12 @@ name = "pinster"
 version = "0.1.0"
 description = "Hitster CLI clone"
 readme = "README.md"
-authors = [{ name = "Michał Pindel", email = "m.pindel7991@gmail.com" }]
+authors = [{ name = "pin" }]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = ["python-json-logger>=3.2.1", "spotipy>=2.25.0", "typer>=0.15.1"]
 
 [project.scripts]
-pinster = "pinster:main"
+pinster = "pinster.main:app"
 
 [build-system]
 requires = ["hatchling"]
@@ -19,9 +19,11 @@ dev = ["pre-commit>=4.1.0"]
 
 [tool.pyright]
 typeCheckingMode = "strict"
+reportMissingTypeStubs = "warning"
 
 [tool.ruff.lint]
 ignore = [
+    # from https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
     "W191",
     "E111",
     "E114",
@@ -35,6 +37,10 @@ ignore = [
     "Q003",
     "COM812",
     "COM819",
+    # custom
+    "ANN204",
+    "TD002",
+    "TD003",
 ]
 select = ["ALL"]
 
