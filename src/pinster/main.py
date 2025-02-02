@@ -22,7 +22,6 @@ app = typer.Typer()
 GAME_LIMIT = 100
 SILENCE_PODCAST_EPISDODE_ID = "0KgjitRy881dfSEmRhUZE5"
 SPOTIFY_MARKET = "PL"  # ISO 3166-1 alpha-2 country code
-TRACK_FIELDS_TO_RETURN = "id,name,album(release_date),artists(name)"
 
 
 @app.command()
@@ -42,16 +41,16 @@ def main(
         )
     )
 
-    playlist_tracks = _get_all_playlist_tracks_from_api(sp, "21pb7wgr2qqVzKInStmoEm")
-    random.shuffle(playlist_tracks)
+    liked_songs = _get_all_liked_songs_from_api(sp)
+    random.shuffle(liked_songs)
     typer.confirm(
-        "Track queue ready. Make sure your target device has the Spotify app open or is playing something. Start game?",
+        "Track queue ready. Make sure your target device is playing something. Start game?",
         abort=True,
     )
 
-    for track in playlist_tracks[:GAME_LIMIT]:
-        track_data = track["track"]
-        sp.start_playback(uris=[f"spotify:track:{track_data['id']}"])
+    for song in liked_songs[:GAME_LIMIT]:
+        song_data = song["track"]
+        sp.start_playback(uris=[f"spotify:track:{song_data['id']}"])
         with rich.progress.Progress(
             rich.progress.SpinnerColumn(),
             rich.progress.TextColumn("[progress.description]{task.description}"),
@@ -62,35 +61,29 @@ def main(
         sp.start_playback(uris=[f"spotify:episode:{SILENCE_PODCAST_EPISDODE_ID}"])
         input()
 
-        artists = [artist["name"] for artist in track_data["artists"]]
-        name = track_data["name"]
-        release_date = track_data["album"]["release_date"]
+        artists = [artist["name"] for artist in song_data["artists"]]
+        name = song_data["name"]
+        release_date = song_data["album"]["release_date"]
         rich.print(f"{name}\n{', '.join(artists)}\n{release_date[:4]}")
         input()
 
 
-def _get_all_playlist_tracks_from_api(
-    sp: spotipy.Spotify, playlist_id: str
-) -> list[dict[str, Any]]:
+def _get_all_liked_songs_from_api(sp: spotipy.Spotify) -> list[dict[str, Any]]:
     """Get all tracks from a playlist."""
-    playlist_tracks: list[dict[str, Any]] = []
+    liked_songs: list[dict[str, Any]] = []
     offset = 0
-    limit = 100
+    limit = 50
     total = 1
     while offset < total:
-        response = sp.playlist_items(
-            playlist_id,
-            fields=f"limit,offset,total,items(track({TRACK_FIELDS_TO_RETURN}))",
-            offset=offset,
-            limit=limit,
-            market=SPOTIFY_MARKET,
+        response = sp.current_user_saved_tracks(
+            limit=limit, offset=offset, market=SPOTIFY_MARKET
         )
         if response is None:
             break
-        playlist_tracks.extend(response["items"])
+        liked_songs.extend(response["items"])
         offset += limit
         total = response["total"]
-    return playlist_tracks
+    return liked_songs
 
 
 def _setup_logging() -> None:
