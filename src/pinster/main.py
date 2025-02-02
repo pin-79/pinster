@@ -20,7 +20,7 @@ app = typer.Typer()
 
 
 GAME_LIMIT = 100
-SILENCE_PODCAST_EPISDODE_ID = "0KgjitRy881dfSEmRhUZE5"
+SILENCE_PODCAST_EPISODE_ID = "0KgjitRy881dfSEmRhUZE5"
 SPOTIFY_MARKET = "PL"  # ISO 3166-1 alpha-2 country code
 
 
@@ -50,7 +50,7 @@ def main(
 
     for song in liked_songs[:GAME_LIMIT]:
         song_data = song["track"]
-        sp.start_playback(uris=[f"spotify:track:{song_data['id']}"])
+        sp.start_playback(uris=[f"spotify:track:{song_data['id']}"])  # type: ignore[reportUnknownMemberType]
         with rich.progress.Progress(
             rich.progress.SpinnerColumn(),
             rich.progress.TextColumn("[progress.description]{task.description}"),
@@ -58,7 +58,7 @@ def main(
         ) as progress:
             progress.add_task("Playing track...", total=None)
             input()
-        sp.start_playback(uris=[f"spotify:episode:{SILENCE_PODCAST_EPISDODE_ID}"])
+        sp.start_playback(uris=[f"spotify:episode:{SILENCE_PODCAST_EPISODE_ID}"])  # type: ignore[reportUnknownMemberType]
         input()
 
         artists = [artist["name"] for artist in song_data["artists"]]
@@ -75,7 +75,7 @@ def _get_all_liked_songs_from_api(sp: spotipy.Spotify) -> list[dict[str, Any]]:
     limit = 50
     total = 1
     while offset < total:
-        response = sp.current_user_saved_tracks(
+        response = sp.current_user_saved_tracks(  # type: ignore[reportUnknownMemberType]
             limit=limit, offset=offset, market=SPOTIFY_MARKET
         )
         if response is None:
