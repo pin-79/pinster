@@ -19,9 +19,10 @@ logger = logging.getLogger("pinster")
 app = typer.Typer()
 
 
+GAME_LIMIT = 100
+SILENCE_PODCAST_EPISDODE_ID = "0KgjitRy881dfSEmRhUZE5"
 SPOTIFY_MARKET = "PL"  # ISO 3166-1 alpha-2 country code
 TRACK_FIELDS_TO_RETURN = "id,name,album(release_date),artists(name)"
-GAME_LIMIT = 100
 
 
 @app.command()
@@ -41,10 +42,10 @@ def main(
         )
     )
 
-    playlist_tracks = _get_all_playlist_tracks(sp, "21pb7wgr2qqVzKInStmoEm")
+    playlist_tracks = _get_all_playlist_tracks_from_api(sp, "21pb7wgr2qqVzKInStmoEm")
     random.shuffle(playlist_tracks)
     typer.confirm(
-        "Track queue ready. Make sure your target device has the Spotify app open. Start game?",
+        "Track queue ready. Make sure your target device has the Spotify app open or is playing something. Start game?",
         abort=True,
     )
 
@@ -58,7 +59,7 @@ def main(
         ) as progress:
             progress.add_task("Playing track...", total=None)
             input()
-        sp.pause_playback()
+        sp.start_playback(uris=[f"spotify:episode:{SILENCE_PODCAST_EPISDODE_ID}"])
         input()
 
         artists = [artist["name"] for artist in track_data["artists"]]
@@ -68,7 +69,7 @@ def main(
         input()
 
 
-def _get_all_playlist_tracks(
+def _get_all_playlist_tracks_from_api(
     sp: spotipy.Spotify, playlist_id: str
 ) -> list[dict[str, Any]]:
     """Get all tracks from a playlist."""
