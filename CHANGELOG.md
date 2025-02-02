@@ -7,4 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-TODO
+### Added
+
+- A simple working version: shuffle the user's Liked Songs and give room to guess
+the details.

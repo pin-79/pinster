@@ -1,10 +1,17 @@
 # pinster
 
-Hitster CLI clone.
+Hitster CLI clone. Guess the song name, artist and year just by listening.
 
-## Tentative next steps
+## Requirements for playing
 
-### Simplest possible version
+You need a Spotify Developer App configured
+(https://developer.spotify.com/documentation/web-api/tutorials/getting-started).
 
-Provided a Spotify playlist ID, construct a random queue of songs and play them one by
-one, allowing to stop playback at any point.
+## Instructions
+
+Simply install and/or run the command using your preferred package manager
+(example: `uvx pinster`). Use the `--help` option if needed.
+
+The game plays a random song from your Liked Songs. Pause using `Enter` and guess
+the song details. Press `Enter` to reveal the answer. Press `Enter` again to play
+the next song.
