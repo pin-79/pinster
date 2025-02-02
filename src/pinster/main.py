@@ -1,15 +1,16 @@
 """Main pinster module."""
 
 import atexit
-import dataclasses
 import importlib.resources
 import json
 import logging
 import logging.config
 import pathlib
+import random
 from typing import Annotated, Any
 
 import rich
+import rich.progress
 import spotipy
 import typer
 
@@ -20,16 +21,7 @@ app = typer.Typer()
 
 SPOTIFY_MARKET = "PL"  # ISO 3166-1 alpha-2 country code
 TRACK_FIELDS_TO_RETURN = "id,name,album(release_date),artists(name)"
-
-
-@dataclasses.dataclass(frozen=True)
-class GameTrack:
-    """Track to be used in-game (not representative of the Spotify API response)."""
-
-    id: str
-    name: str
-    artists: list[str]
-    release_date: str
+GAME_LIMIT = 100
 
 
 @app.command()
@@ -40,29 +32,40 @@ def main(
 ) -> None:
     """Main command."""
     _setup_logging()
-
     sp = spotipy.Spotify(
         auth_manager=spotipy.SpotifyOAuth(
             client_id=spotify_client_id,
             client_secret=spotify_client_secret,
             redirect_uri=spotify_redirect_uri or "http://localhost:3000",
-            scope="user-library-read, user-modify-playback-state",
+            scope="user-library-read, user-read-playback-state, user-modify-playback-state",
         )
     )
-    playlist_tracks = _get_all_playlist_tracks(sp, "21pb7wgr2qqVzKInStmoEm")
-    tracks_to_use: list[GameTrack] = []
-    for track in playlist_tracks:
-        track_data = track["track"]
-        tracks_to_use.append(
-            GameTrack(
-                track_data["id"],
-                track_data["name"],
-                [artist["name"] for artist in track_data["artists"]],
-                track_data["album"]["release_date"],
-            )
-        )
 
-    rich.print(tracks_to_use)
+    playlist_tracks = _get_all_playlist_tracks(sp, "21pb7wgr2qqVzKInStmoEm")
+    random.shuffle(playlist_tracks)
+    typer.confirm(
+        "Track queue ready. Make sure your target device has the Spotify app open. Start game?",
+        abort=True,
+    )
+
+    for track in playlist_tracks[:GAME_LIMIT]:
+        track_data = track["track"]
+        sp.start_playback(uris=[f"spotify:track:{track_data['id']}"])
+        with rich.progress.Progress(
+            rich.progress.SpinnerColumn(),
+            rich.progress.TextColumn("[progress.description]{task.description}"),
+            transient=True,
+        ) as progress:
+            progress.add_task("Playing track...", total=None)
+            input()
+        sp.pause_playback()
+        input()
+
+        artists = [artist["name"] for artist in track_data["artists"]]
+        name = track_data["name"]
+        release_date = track_data["album"]["release_date"]
+        rich.print(f"{name}\n{', '.join(artists)}\n{release_date[:4]}")
+        input()
 
 
 def _get_all_playlist_tracks(
