@@ -28,7 +28,7 @@
       "level": "DEBUG",
       "formatter": "json",
       "filename": "logs/pinster.log",
-      "maxBytes": 1000000,
+      "maxBytes": 5000000,
       "backupCount": 3
     },
     "queue_handler": {
