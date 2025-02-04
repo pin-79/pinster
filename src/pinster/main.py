@@ -9,9 +9,11 @@ import pathlib
 import random
 from typing import Annotated, Any
 
+import platformdirs
 import rich
 import rich.progress
-import spotipy
+import spotipy  # type: ignore[reportMissingTypeStubs]
+import spotipy.cache_handler  # type: ignore[reportMissingTypeStubs]
 import typer
 
 logger = logging.getLogger("pinster")
@@ -38,6 +40,9 @@ def main(
             client_secret=spotify_client_secret,
             redirect_uri=spotify_redirect_uri or "http://localhost:3000",
             scope="user-library-read, user-read-playback-state, user-modify-playback-state",
+            cache_handler=spotipy.cache_handler.CacheFileHandler(
+                cache_path=f"{platformdirs.user_cache_dir('pinster', appauthor=False, ensure_exists=True)}/.cache"
+            ),
         )
     )
 

@@ -133,6 +133,7 @@ name = "pinster"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "platformdirs" },
     { name = "python-json-logger" },
     { name = "spotipy" },
     { name = "typer" },
@@ -145,6 +146,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "platformdirs", specifier = ">=4.3.6" },
     { name = "python-json-logger", specifier = ">=3.2.1" },
     { name = "spotipy", specifier = ">=2.25.0" },
     { name = "typer", specifier = ">=0.15.1" },
