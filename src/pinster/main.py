@@ -1,8 +1,5 @@
 """Main pinster module."""
 
-import atexit
-import importlib.resources
-import json
 import logging
 import logging.config
 import random
@@ -14,6 +11,8 @@ import rich.progress
 import spotipy  # type: ignore[reportMissingTypeStubs]
 import spotipy.cache_handler  # type: ignore[reportMissingTypeStubs]
 import typer
+
+import pinster.logger
 
 logger = logging.getLogger("pinster")
 
@@ -32,7 +31,7 @@ def main(
     spotify_redirect_uri: str | None = None,
 ) -> None:
     """Main command."""
-    _setup_logging()
+    pinster.logger.setup_logging()
     sp = spotipy.Spotify(
         auth_manager=spotipy.SpotifyOAuth(
             client_id=spotify_client_id,
@@ -88,24 +87,6 @@ def _get_all_liked_songs_from_api(sp: spotipy.Spotify) -> list[dict[str, Any]]:
         offset += limit
         total = response["total"]
     return liked_songs
-
-
-def _setup_logging() -> None:
-    """Sets up the root logger config."""
-    with importlib.resources.open_text(app.info.name, "configs/logging.json") as f:  # type: ignore[reportArgumentType]
-        config = json.load(f)
-
-    # Ensure the logs directory exists
-    config["handlers"]["file"]["filename"] = (
-        f"{platformdirs.user_log_dir(app.info.name, appauthor=False, ensure_exists=True)}/{app.info.name}.log"
-    )
-
-    logging.config.dictConfig(config)
-
-    queue_handler = logging.getHandlerByName("queue_handler")
-    if queue_handler is not None:
-        queue_handler.listener.start()  # type: ignore[reportUnknownMemberType]
-        atexit.register(queue_handler.listener.stop)  # type: ignore[reportUnknownMemberType]
 
 
 if __name__ == "__main__":
