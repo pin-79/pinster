@@ -5,7 +5,6 @@ import importlib.resources
 import json
 import logging
 import logging.config
-import pathlib
 import random
 from typing import Annotated, Any
 
@@ -97,8 +96,10 @@ def _setup_logging() -> None:
         config = json.load(f)
 
     # Ensure the logs directory exists
-    log_file = pathlib.Path(config["handlers"]["file"]["filename"])
-    log_file.parent.mkdir(exist_ok=True)
+    config["handlers"]["file"]["filename"] = (
+        platformdirs.user_log_dir(app.info.name, appauthor=False, ensure_exists=True)
+        + "/pinster.log"
+    )
 
     logging.config.dictConfig(config)
 
