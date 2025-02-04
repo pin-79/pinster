@@ -17,7 +17,7 @@ import typer
 
 logger = logging.getLogger("pinster")
 
-app = typer.Typer()
+app = typer.Typer(name="pinster")
 
 
 GAME_LIMIT = 100
@@ -40,7 +40,7 @@ def main(
             redirect_uri=spotify_redirect_uri or "http://localhost:3000",
             scope="user-library-read, user-read-playback-state, user-modify-playback-state",
             cache_handler=spotipy.cache_handler.CacheFileHandler(
-                cache_path=f"{platformdirs.user_cache_dir('pinster', appauthor=False, ensure_exists=True)}/.cache"
+                cache_path=f"{platformdirs.user_cache_dir(app.info.name, appauthor=False, ensure_exists=True)}/.cache"
             ),
         )
     )
@@ -92,13 +92,12 @@ def _get_all_liked_songs_from_api(sp: spotipy.Spotify) -> list[dict[str, Any]]:
 
 def _setup_logging() -> None:
     """Sets up the root logger config."""
-    with importlib.resources.open_text("pinster", "configs/logging.json") as f:
+    with importlib.resources.open_text(app.info.name, "configs/logging.json") as f:  # type: ignore[reportArgumentType]
         config = json.load(f)
 
     # Ensure the logs directory exists
     config["handlers"]["file"]["filename"] = (
-        platformdirs.user_log_dir(app.info.name, appauthor=False, ensure_exists=True)
-        + "/pinster.log"
+        f"{platformdirs.user_log_dir(app.info.name, appauthor=False, ensure_exists=True)}/{app.info.name}.log"
     )
 
     logging.config.dictConfig(config)
