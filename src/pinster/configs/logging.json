@@ -16,6 +16,11 @@
       }
     }
   },
+  "filters": {
+    "sensitive_data": {
+      "()": "pinster.logger.SensitiveDataFilter"
+    }
+  },
   "handlers": {
     "stderr": {
       "class": "logging.StreamHandler",
@@ -27,8 +32,11 @@
       "class": "logging.handlers.RotatingFileHandler",
       "level": "DEBUG",
       "formatter": "json",
+      "filters": [
+        "sensitive_data"
+      ],
       "filename": "logs/pinster.log",
-      "maxBytes": 1000000,
+      "maxBytes": 5000000,
       "backupCount": 3
     },
     "queue_handler": {

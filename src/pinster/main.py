@@ -1,22 +1,22 @@
 """Main pinster module."""
 
-import atexit
-import importlib.resources
-import json
 import logging
 import logging.config
-import pathlib
 import random
 from typing import Annotated, Any
 
+import platformdirs
 import rich
 import rich.progress
-import spotipy
+import spotipy  # type: ignore[reportMissingTypeStubs]
+import spotipy.cache_handler  # type: ignore[reportMissingTypeStubs]
 import typer
+
+import pinster.logger
 
 logger = logging.getLogger("pinster")
 
-app = typer.Typer()
+app = typer.Typer(name="pinster")
 
 
 GAME_LIMIT = 100
@@ -31,13 +31,16 @@ def main(
     spotify_redirect_uri: str | None = None,
 ) -> None:
     """Main command."""
-    _setup_logging()
+    pinster.logger.setup_logging()
     sp = spotipy.Spotify(
         auth_manager=spotipy.SpotifyOAuth(
             client_id=spotify_client_id,
             client_secret=spotify_client_secret,
             redirect_uri=spotify_redirect_uri or "http://localhost:3000",
             scope="user-library-read, user-read-playback-state, user-modify-playback-state",
+            cache_handler=spotipy.cache_handler.CacheFileHandler(
+                cache_path=f"{platformdirs.user_cache_dir(app.info.name, appauthor=False, ensure_exists=True)}/.cache"
+            ),
         )
     )
 
@@ -84,23 +87,6 @@ def _get_all_liked_songs_from_api(sp: spotipy.Spotify) -> list[dict[str, Any]]:
         offset += limit
         total = response["total"]
     return liked_songs
-
-
-def _setup_logging() -> None:
-    """Sets up the root logger config."""
-    with importlib.resources.open_text("pinster", "configs/logging.json") as f:
-        config = json.load(f)
-
-    # Ensure the logs directory exists
-    log_file = pathlib.Path(config["handlers"]["file"]["filename"])
-    log_file.parent.mkdir(exist_ok=True)
-
-    logging.config.dictConfig(config)
-
-    queue_handler = logging.getHandlerByName("queue_handler")
-    if queue_handler is not None:
-        queue_handler.listener.start()  # type: ignore[reportUnknownMemberType]
-        atexit.register(queue_handler.listener.stop)  # type: ignore[reportUnknownMemberType]
 
 
 if __name__ == "__main__":
