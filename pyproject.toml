@@ -1,6 +1,6 @@
 [project]
 name = "pinster"
-version = "0.1.0"
+version = "0.1.1"
 description = "Hitster CLI clone"
 readme = "README.md"
 authors = [{ name = "pin" }]
