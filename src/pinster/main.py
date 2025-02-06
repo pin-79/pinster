@@ -16,7 +16,7 @@ import pinster.logger
 
 logger = logging.getLogger("pinster")
 
-app = typer.Typer(name="pinster")
+app = typer.Typer()
 
 
 GAME_LIMIT = 100
@@ -24,14 +24,19 @@ SILENCE_PODCAST_EPISODE_ID = "0KgjitRy881dfSEmRhUZE5"
 SPOTIFY_MARKET = "PL"  # ISO 3166-1 alpha-2 country code
 
 
+@app.callback()
+def app_callback() -> None:
+    """Runs setup before commands."""
+    pinster.logger.setup_logging()
+
+
 @app.command()
-def main(
+def play(
     spotify_client_id: Annotated[str, typer.Option(prompt=True)],
     spotify_client_secret: Annotated[str, typer.Option(prompt=True)],
     spotify_redirect_uri: str | None = None,
 ) -> None:
-    """Main command."""
-    pinster.logger.setup_logging()
+    """Runs the game."""
     sp = spotipy.Spotify(
         auth_manager=spotipy.SpotifyOAuth(
             client_id=spotify_client_id,

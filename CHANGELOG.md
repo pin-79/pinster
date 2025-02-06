@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
 
+- Running the game is now done through `pinster play`. Just `pinster` will not work
+    anymore.
 
 ## [0.1.1] - 2025-02-05
 
