@@ -14,6 +14,24 @@ _ALL_CHARTS_URL = (
 )
 
 
+def get_songs_with_total_weeks_in_range(
+    min_threshold: int, max_threshold: int | None = None
+) -> set[SimpleSong]:
+    """Gets songs which have been on the Hot 100 between min (incl.) and max (excl.) threshold no. of weeks."""
+    response = httpx.get(_ALL_CHARTS_URL)
+    songs: set[SimpleSong] = set()
+    for raw_chart in reversed(response.json()):
+        chart = Chart.model_validate(raw_chart)
+        for song in chart.data:
+            if max_threshold is None:
+                if song.weeks_on_chart >= min_threshold:
+                    songs.add(SimpleSong(song.song, song.artist))
+                continue
+            if max_threshold > song.weeks_on_chart >= min_threshold:
+                songs.add(SimpleSong(song.song, song.artist))
+    return songs
+
+
 class Song(pydantic.BaseModel):
     """A song in the context of a Billboard Hot 100 chart."""
 
@@ -53,21 +71,3 @@ class SimpleSong:
 
     title: str
     artist: str
-
-
-def get_songs_with_total_weeks_in_range(
-    min_threshold: int, max_threshold: int | None = None
-) -> set[SimpleSong]:
-    """Gets songs which have been on the Hot 100 between min (incl.) and max (excl.) threshold no. of weeks."""
-    response = httpx.get(_ALL_CHARTS_URL)
-    songs: set[SimpleSong] = set()
-    for raw_chart in reversed(response.json()):
-        chart = Chart.model_validate(raw_chart)
-        for song in chart.data:
-            if max_threshold is None:
-                if song.weeks_on_chart >= min_threshold:
-                    songs.add(SimpleSong(song.song, song.artist))
-                continue
-            if max_threshold > song.weeks_on_chart >= min_threshold:
-                songs.add(SimpleSong(song.song, song.artist))
-    return songs
