@@ -12,8 +12,8 @@ import spotipy  # type: ignore[reportMissingTypeStubs]
 import spotipy.cache_handler  # type: ignore[reportMissingTypeStubs]
 import typer
 
+import pinster.billboard
 import pinster.logger
-from pinster import billboard
 
 logger = logging.getLogger("pinster")
 
@@ -78,9 +78,15 @@ def play(
 
 
 @app.command()
-def prepare() -> None:
+def prepare(test: bool = False) -> None:  # noqa: FBT001, FBT002
     """Prepares the data needed for the game."""
-    rich.print(billboard.get_songs_with_most_total_weeks_on_the_chart(50))
+    if test:
+        songs = pinster.billboard.get_songs_with_total_weeks_in_range(10, 15)
+    else:
+        songs = pinster.billboard.get_songs_with_total_weeks_in_range(
+            pinster.billboard.DEFAULT_MIN_WEEKS_THRESHOLD
+        )
+    rich.print(len(songs))
 
 
 def _get_all_liked_songs_from_api(sp: spotipy.Spotify) -> list[dict[str, Any]]:

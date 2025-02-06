@@ -3,14 +3,12 @@
 from __future__ import annotations
 
 import dataclasses
-from typing import TYPE_CHECKING
+import datetime as dt  # noqa: TC003
 
 import httpx
 import pydantic
 
-if TYPE_CHECKING:
-    import datetime as dt
-
+DEFAULT_MIN_WEEKS_THRESHOLD = 25  # this returns just shy of 2000 songs
 _ALL_CHARTS_URL = (
     "https://raw.githubusercontent.com/mhollingshead/billboard-hot-100/main/all.json"
 )
@@ -57,13 +55,19 @@ class SimpleSong:
     artist: str
 
 
-def get_songs_with_most_total_weeks_on_the_chart(threshold: int) -> set[SimpleSong]:
-    """Gets songs which have been on the Hot 100 for at least the threshold no. of weeks."""
+def get_songs_with_total_weeks_in_range(
+    min_threshold: int, max_threshold: int | None = None
+) -> set[SimpleSong]:
+    """Gets songs which have been on the Hot 100 between min (incl.) and max (excl.) threshold no. of weeks."""
     response = httpx.get(_ALL_CHARTS_URL)
     songs: set[SimpleSong] = set()
     for raw_chart in reversed(response.json()):
         chart = Chart.model_validate(raw_chart)
         for song in chart.data:
-            if song.weeks_on_chart >= threshold:
+            if max_threshold is None:
+                if song.weeks_on_chart >= min_threshold:
+                    songs.add(SimpleSong(song.song, song.artist))
+                continue
+            if max_threshold > song.weeks_on_chart >= min_threshold:
                 songs.add(SimpleSong(song.song, song.artist))
     return songs
