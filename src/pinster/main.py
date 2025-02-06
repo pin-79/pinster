@@ -13,6 +13,7 @@ import spotipy.cache_handler  # type: ignore[reportMissingTypeStubs]
 import typer
 
 import pinster.logger
+from pinster import billboard
 
 logger = logging.getLogger("pinster")
 
@@ -74,6 +75,12 @@ def play(
         release_date = song_data["album"]["release_date"]
         rich.print(f"{name}\n{', '.join(artists)}\n{release_date[:4]}")
         input()
+
+
+@app.command()
+def prepare() -> None:
+    """Prepares the data needed for the game."""
+    rich.print(billboard.get_songs_with_most_total_weeks_on_the_chart(50))
 
 
 def _get_all_liked_songs_from_api(sp: spotipy.Spotify) -> list[dict[str, Any]]:
