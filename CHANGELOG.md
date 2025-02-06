@@ -9,8 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Running the game is now done through `pinster play`. Just `pinster` will not work
-    anymore.
+- CLI option for testing to avoid spoiling the actual songs to guess.
+
+### Changed
+
+- Generate songs to guess from Billboard Hot 100 instead of Liked Songs.
 
 ## [0.1.1] - 2025-02-05
 
@@ -24,8 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- A simple working version: shuffle the user's Liked Songs and give room to guess
-the details (#2).
+- POC: shuffle the user's Liked Songs and give room to guess the details (#2).
 
 [unreleased]: https://github.com/pin-79/pinster/compare/v0.1.1...HEAD
 [0.1.1]: https://github.com/pin-79/pinster/compare/v0.1.0...v0.1.1
