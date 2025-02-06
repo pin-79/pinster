@@ -18,15 +18,7 @@ logger = logging.getLogger("pinster")
 app = typer.Typer()
 
 
-GAME_LIMIT = 100
-SILENCE_PODCAST_EPISODE_ID = "0KgjitRy881dfSEmRhUZE5"
-SPOTIFY_MARKET = "PL"  # ISO 3166-1 alpha-2 country code
-
-
-@app.callback()
-def app_callback() -> None:
-    """Runs setup before commands."""
-    pinster.logger.setup_logging()
+_SINGLE_GAME_SONG_QUEUE_LIMIT = 250
 
 
 @app.command()
@@ -37,6 +29,8 @@ def play(
     test: bool = False,  # noqa: FBT001, FBT002
 ) -> None:
     """Runs the game."""
+    pinster.logger.setup_logging()
+
     if test:
         songs = pinster.billboard.get_songs_with_total_weeks_in_range(10, 15)
     else:
@@ -53,7 +47,7 @@ def play(
         "Track queue ready. Make sure your target device is playing something. Start game?",
         abort=True,
     )
-    for song in songs[:GAME_LIMIT]:
+    for song in songs[:_SINGLE_GAME_SONG_QUEUE_LIMIT]:
         current_track = spotify.get_most_popular_search_result(song.title, song.artist)
         if not current_track:
             continue
