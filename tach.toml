@@ -11,7 +11,7 @@ source_roots = [ "src",
 
 [[modules ]]
 path = "pinster.main"
-depends_on = ["pinster.billboard", "pinster.logger", "pinster.spotify"]
+depends_on = ["pinster.billboard", "pinster.logger", "pinster.spotify", "pinster.wikipedia"]
 
 [[modules ]]
 path = "pinster.spotify"
@@ -24,3 +24,12 @@ depends_on = []
 [[modules ]]
 path = "pinster.billboard"
 depends_on = []
+
+[[modules ]]
+path = "pinster.wikipedia"
+depends_on = []
+
+[[modules ]]
+path = "pinster.utils"
+depends_on = []
+utility = true
