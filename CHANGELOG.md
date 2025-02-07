@@ -13,7 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Generate songs to guess from Billboard Hot 100 instead of Liked Songs.
+- Generate songs to guess from a combination of Billboard Hot 100 and Polish Top Songs
+    instead of Liked Songs.
 
 ## [0.1.1] - 2025-02-05
 
