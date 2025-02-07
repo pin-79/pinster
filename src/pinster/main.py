@@ -12,13 +12,17 @@ import typer
 import pinster.billboard
 import pinster.logger
 import pinster.spotify
+import pinster.utils
+import pinster.wikipedia
 
 logger = logging.getLogger("pinster")
 
 app = typer.Typer()
 
 
-_SINGLE_GAME_SONG_QUEUE_LIMIT = 250
+_SINGLE_GAME_SONG_QUEUE_LIMIT = 500
+_BILLBOARD_SONGS_RATIO = 0.75
+_PL_SONGS_RATIO = 0.2
 
 
 @app.command()
@@ -31,20 +35,16 @@ def play(
     """Runs the game."""
     pinster.logger.setup_logging()
 
-    if test:
-        songs = pinster.billboard.get_songs_with_total_weeks_in_range(10, 15)
-    else:
-        songs = pinster.billboard.get_songs_with_total_weeks_in_range(
-            pinster.billboard.DEFAULT_MIN_WEEKS_THRESHOLD
-        )
-    songs = list(songs)
+    songs = _get_billboard_songs(test=test)
+    songs.extend(_get_pl_songs())
     random.shuffle(songs)
+
     spotify = pinster.spotify.Spotify(
         spotify_client_id, spotify_client_secret, spotify_redirect_uri
     )
 
     typer.confirm(
-        "Track queue ready. Make sure your target device is playing something. Start game?",
+        f"Track queue ({len(songs)}) ready. Make sure your target device is playing something. Start game?",
         abort=True,
     )
     for song in songs[:_SINGLE_GAME_SONG_QUEUE_LIMIT]:
@@ -66,6 +66,28 @@ def play(
 
         rich.print(str(current_track))
         input()
+
+
+def _get_billboard_songs(*, test: bool = False) -> list[pinster.utils.SimpleSong]:
+    if test:
+        songs = pinster.billboard.get_songs_with_total_weeks_not_above_threshold(
+            pinster.billboard.DEFAULT_WEEKS_THRESHOLD
+        )
+    else:
+        songs = pinster.billboard.get_songs_with_total_weeks_above_threshold(
+            pinster.billboard.DEFAULT_WEEKS_THRESHOLD
+        )
+    songs = list(songs)
+    random.shuffle(songs)
+    limit = int(_SINGLE_GAME_SONG_QUEUE_LIMIT * _BILLBOARD_SONGS_RATIO)
+    return songs[:limit]
+
+
+def _get_pl_songs() -> list[pinster.utils.SimpleSong]:
+    songs = list(pinster.wikipedia.get_all_time_polish_songs())
+    random.shuffle(songs)
+    limit = int(_SINGLE_GAME_SONG_QUEUE_LIMIT * _PL_SONGS_RATIO)
+    return songs[:limit]
 
 
 if __name__ == "__main__":

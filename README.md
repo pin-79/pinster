@@ -12,8 +12,8 @@ You need a Spotify account and a Spotify Developer App configured
 Simply install and/or run the command using your preferred package manager
 (example: `uvx pinster`). Use the `--help` option if needed.
 
-The game plays a random track chosen from a selection of songs which stayed on the
-Billboard Hot 100 chart for a decent amount of time.
+The game plays a random track chosen from a selection of popular songs from different
+sources.
 
 Pause using `Enter` and guess the song details. Press `Enter` to reveal the answer.
 Press `Enter` again to play the next song.
