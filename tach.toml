@@ -1,0 +1,26 @@
+interfaces = []
+exclude = [
+    "**/*__pycache__",
+    "**/*egg-info",
+    "**/docs",
+    "**/tests",
+    "**/venv",
+]
+source_roots = [ "src",
+]
+
+[[modules ]]
+path = "pinster.main"
+depends_on = ["pinster.billboard", "pinster.logger", "pinster.spotify"]
+
+[[modules ]]
+path = "pinster.spotify"
+depends_on = []
+
+[[modules ]]
+path = "pinster.logger"
+depends_on = []
+
+[[modules ]]
+path = "pinster.billboard"
+depends_on = []
